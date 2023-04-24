@@ -2,7 +2,10 @@ import { useCallback, useState, useRef, useEffect } from 'react'
 import produce, { Draft } from 'immer'
 
 type Fns<T> = (value:Draft<T>)=>any
-type Fn<T> = (params:Fns<T>| T)=>void
+type Reduce<Type> = {
+  [Property in keyof Type]?: Type[Property];
+}
+type Fn<T> = (params:Fns<T>| Reduce<T>)=>void
 
 const useStateByImmer = <T>(state:T):[state:T, setState:Fn<T>] => {
   const [originState, setState] = useState<T>(state)
@@ -10,10 +13,6 @@ const useStateByImmer = <T>(state:T):[state:T, setState:Fn<T>] => {
     if (typeof params === 'object') {
       setState(produce((draft) => {
         Object.assign(draft, params)
-        // draft = {
-        //   ...draft,
-        //   ...params
-        // }
       }))
     }
     if (typeof params === 'function') {
