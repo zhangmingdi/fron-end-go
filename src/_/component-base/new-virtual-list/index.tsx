@@ -58,17 +58,16 @@ const VirtualList = memo((props:Props) => {
   }, [])
 
   const onScroll = useCallback((e) => {
-    console.log('我触发了')
-    // if (isScrollRef.current) return
-    // isScrollRef.current = true
+    if (isScrollRef.current) return
+    isScrollRef.current = true
 
     const fn = () => {
       const { scrollTop } = e.target
       const anchorIndex = Math.floor(scrollTop / cellHeight)
       setVisibleData(anchorIndex)
     }
-    // fn()
-    // requestAnimationFrame(fn)
+    fn()
+    requestAnimationFrame(fn)
   }, [cellHeight])
 
   return (
@@ -81,8 +80,6 @@ const VirtualList = memo((props:Props) => {
         <div
         style={{
           height: totalHeight + 'px'
-          // paddingTop: state.startOffset + 'px',
-          // paddingBottom: state.endOffset + 'px'
         }}
         >
         </div>
