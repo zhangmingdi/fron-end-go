@@ -2,7 +2,7 @@ import { memo, useEffect, useState } from 'react'
 import ListTestItem from '@/_/component-business/list-test-item'
 import styles from './style.less'
 import LargeFileUpload from './component/large-file-upload'
-import VirtualList from '@/_/component-base/new-virtual-list'
+import VirtualList from '@/_/component-base/dynamic-virtual-list'
 import Virtual from '@/_/component-base/virtual'
 import { List } from 'react-virtualized'
 const list = new Array(10000).fill({}).map((item, i) => ({ i }))
@@ -33,6 +33,7 @@ function trasfromArrToTree (arr) {
 }
 type Itme={
   i:number
+  num:string[]
 }
 const View = memo(() => {
   const [state, setState] = useState(0)
@@ -54,16 +55,20 @@ const View = memo(() => {
       >addArr</button>
       <LargeFileUpload />
       <VirtualList
-        cellHeight={100}
-        list={new Array(10000).fill({}).map((item, i) => ({ i }))}
+        list={new Array(100).fill({}).map((item, i) => ({
+          i,
+          num: new Array(Math.ceil(Math.random() * 50)).fill('我')
+        }))}
         rendItem = {(item:Itme, i) => {
           return (
-            <div className={styles.item} key={ '' + i}>
-              {item.i}
+            <div key={ '' + i}>
+              {item.i}:{
+                item.num.map(vo => vo)
+              }
             </div>
           )
         }}
-
+        estimated={10}
       />
       {/* <List
         rowHeight={100}
