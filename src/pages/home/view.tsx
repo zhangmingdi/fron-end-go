@@ -61,10 +61,13 @@ const View = memo(() => {
         }))}
         rendItem = {(item:Itme, i) => {
           return (
-            <div key={ '' + i}>
-              {item.i}:{
-                item.num.map(vo => vo)
-              }
+            // <div key={ '' + i}>
+            //   {item.i}:{
+            //     item.num.map(vo => vo)
+            //   }
+            // </div>
+            <div className={styles.item} key={ '' + i}>
+              {item.i}
             </div>
           )
         }}

@@ -58,14 +58,14 @@ const DynamicVirtualList = memo((props:Props) => {
       scrollTop
     } = wrappperRef.current
 
-    const endIndex = state.positions?.findIndex(vo => vo.bottom >= scrollTop + height) || 0
+    const endIndex = Math.max(state.endIndex, state.positions?.findIndex(vo => vo.bottom >= scrollTop + height) || 0)
     const newPostions = state.positions.map(vo => {
       return { ...vo }
     })
 
     if (endIndex > -1) {
       let i = 0
-      for (let j = anchorIndex; j <= endIndex; j++, i++) {
+      for (let j = anchorIndex; j < endIndex; j++, i++) {
         const height = listRefs.current?.[i]
         const oldHeight = newPostions[j].height
         const oldBottom = newPostions[j].bottom
@@ -83,7 +83,7 @@ const DynamicVirtualList = memo((props:Props) => {
       }
     }
     isScrollRef.current = false
-  }, [])
+  }, [state.positions, state.endIndex])
 
   useEffect(() => {
     const {
@@ -108,21 +108,19 @@ const DynamicVirtualList = memo((props:Props) => {
   }, [state.startIndex, state.endIndex])
 
   const onScroll = useCallback((e) => {
-    if (isScrollRef.current) return
-    isScrollRef.current = true
     const { scrollTop } = e.target
     const {
       height
     } = wrappperRef.current.getBoundingClientRect()
 
     const startIndex = state.positions?.findIndex(vo => vo.bottom > scrollTop)
-    const endIndex = state.positions?.findIndex(vo => vo.bottom >= scrollTop + height)
+    const endIndex = Math.max(state.endIndex, state.positions?.findIndex(vo => vo.bottom > scrollTop + height))
 
     setState({
       startIndex,
       endIndex
     })
-  }, [cellHeight, state.positions])
+  }, [cellHeight, state.positions, state.endIndex])
 
   return (
     <div className={classNames(styles.wrapper, className)}>
@@ -142,7 +140,7 @@ const DynamicVirtualList = memo((props:Props) => {
             data?.map((item, i) => {
               return (
                 <div key={'' + i} ref={(ref) => {
-                  listRefs.current[i] = ref?.getBoundingClientRect()?.height || 0
+                  listRefs.current[i] = ref?.getBoundingClientRect()?.height || estimated
                 }}>
                   {rendItem(item, i)}
                 </div>
